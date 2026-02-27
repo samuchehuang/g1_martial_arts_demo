@@ -157,21 +157,23 @@ python main.py --deploy stage2 \
 
 ### 姿态估计
 
-使用 MediaPipe Pose 提取 33 个 3D 关键点，映射到 G1 的 8 个手臂关节:
+使用 MediaPipe Pose 提取 33 个 3D 关键点，映射到 G1 的 10 个手臂关节 (单臂5DOF，手腕1自由度):
 
 | 人体关键点 | G1 关节 |
 |-----------|---------|
 | 左肩 (11) | left_shoulder_pitch/roll/yaw |
 | 左肘 (13) | left_elbow |
+| 左手腕 (15) | left_wrist_roll |
 | 右肩 (12) | right_shoulder_pitch/roll/yaw |
 | 右肘 (14) | right_elbow |
+| 右手腕 (16) | right_wrist_roll |
 
 ### 输出格式
 
 ```python
 # trajectory.pkl 结构
 {
-    'q': [T, 8],           # 关节角度 (弧度)
+    'q': [T, 10],          # 关节角度 (弧度), 单臂5DOF×2臂
     'fps': 30,             # 帧率
     'joint_names': [...],  # 关节名称
 }

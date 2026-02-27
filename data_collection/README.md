@@ -128,7 +128,8 @@ from dataset_builder.lerobot_dataset import LeRobotDatasetBuilder, DatasetConfig
 config = DatasetConfig(
     dataset_name="g1_punch",
     fps=30,
-    num_joints=8
+    num_joints=10,  # 单臂5DOF(手腕1自由度) × 2臂
+    wrist_dof=1     # 手腕1自由度 (wrist_roll)
 )
 
 builder = LeRobotDatasetBuilder(config, output_dir="./datasets")
@@ -160,8 +161,8 @@ datasets/punch/
 └── meta.json             # 元数据
 
 数据结构:
-- observation.state: [N, 8] 当前关节角度
-- action: [N, 8] 下一帧目标角度
+- observation.state: [N, 10] 当前关节角度 (单臂5DOF×2臂)
+- action: [N, 10] 下一帧目标角度
 - timestamp: [N] 时间戳
 ```
 
@@ -184,21 +185,21 @@ import pickle
 with open("datasets/punch/trajectory.pkl", 'rb') as f:
     data = pickle.load(f)
     
-# data['q']: [T, 8] 关节角度
+# data['q']: [T, 10] 关节角度 (单臂5DOF×2臂, 手腕1自由度)
 # data['fps']: 30
-# data['joint_names']: 关节名称列表
+# data['joint_names']: 10个关节名称列表
 ```
 
 ## 关键关节映射
 
 | MediaPipe 关键点 | G1 关节 | 说明 |
 |------------------|---------|------|
-| 11 (left_shoulder) | left_shoulder_pitch/roll/yaw | 左肩 |
-| 13 (left_elbow) | left_elbow | 左肘 |
-| 15 (left_wrist) | - | 用于计算肘角度 |
-| 12 (right_shoulder) | right_shoulder_pitch/roll/yaw | 右肩 |
-| 14 (right_elbow) | right_elbow | 右肘 |
-| 16 (right_wrist) | - | 用于计算肘角度 |
+| 11 (left_shoulder) | left_shoulder_pitch/roll/yaw | 左肩3DOF |
+| 13 (left_elbow) | left_elbow | 左肘1DOF |
+| 15 (left_wrist) | left_wrist_roll | 左手腕1DOF |
+| 12 (right_shoulder) | right_shoulder_pitch/roll/yaw | 右肩3DOF |
+| 14 (right_elbow) | right_elbow | 右肘1DOF |
+| 16 (right_wrist) | right_wrist_roll | 右手腕1DOF |
 
 ## 参数调优
 
